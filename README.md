@@ -1,6 +1,6 @@
-# sebamaster-movie-backend application
+# Chronos-backend application
 
-sebamaster-movie-frontend application can be found [here](https://github.com/sebischair/sebamaster-movie-frontend)
+Chronos-frontend application can be found [here](https://github.com/ga92yup/chronos-frontend)
 
 ## Prerequisites
 
@@ -15,9 +15,6 @@ Just for the backend application:
 ## Setup (before first run)
 
 go to your project root folder via command line
-```
-cd path/to/workspace/sebamaster-movie-frontend
-```
 
 **install node dependencies**
 
