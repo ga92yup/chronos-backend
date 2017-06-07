@@ -1,10 +1,10 @@
-# Chronos-backend application
+# Backend for Chronos
 
 Chronos-frontend application can be found [here](https://github.com/ga92yup/chronos-frontend)
 
 ## Prerequisites
 
-Both for the back end and front end application check
+Both for the backend and frontend check
 
 * nodejs [official website](https://nodejs.org/en/) - nodejs includes [npm](https://www.npmjs.com/) (node package manager)
 
