@@ -4,8 +4,8 @@ var mongoose = require('mongoose');
 // Define our movie schema
 var Timeline   = new mongoose.Schema({
     title: String,
-    year: Number,
-    user: {
+    description: String,
+    creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     }
