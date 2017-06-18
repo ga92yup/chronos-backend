@@ -2,15 +2,23 @@
 var mongoose = require('mongoose');
 
 // Define our movie schema
-var Timeline   = new mongoose.Schema({
-    title: String,
+var timelineSchema   = new mongoose.Schema({
+    id: Number,
+    name: String,
     description: String,
-    creator: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+    content: {
+        eventItem: [
+            {
+                id: Number,
+                content: String,
+                start: Date,
+                end: Date
+            }
+        ]
     }
 });
 
-// Export the Mongoose model
-module.exports = mongoose.model('Timeline', Timeline);
+var Timeline = mongoose.model('Timeline', timelineSchema);
 
+// Export the Mongoose model
+module.exports = Timeline;

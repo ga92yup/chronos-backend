@@ -3,9 +3,9 @@ var Timeline = require('./timelineSchema');
 exports.postTimeline = function(req, res) {
     var timeline = new Timeline(req.body);
     //do not allow user to fake identity. The user who postet the timeline must be the same user that is logged in
-    if (!req.user.equals(timeline.user)) {
+   /* if (!req.user.equals(timeline.user)) {
         res.sendStatus(401);
-    }
+    }*/
     timeline.save(function(err, m) {
         if (err) {
             res.status(400).send(err);
@@ -14,6 +14,7 @@ exports.postTimeline = function(req, res) {
         res.status(201).json(m);
     });
 };
+
 // Create endpoint /api/timelines for GET
 exports.getTimelines = function(req, res) {
     Timeline.find(function(err, timelines) {
