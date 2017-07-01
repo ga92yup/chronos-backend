@@ -1,11 +1,13 @@
 // importing Timeline model
 var Timeline = require('./timelineSchema');
+
 exports.postTimeline = function(req, res) {
     var timeline = new Timeline(req.body);
-    //do not allow user to fake identity. The user who postet the timeline must be the same user that is logged in
-   /* if (!req.user.equals(timeline.user)) {
+    //do not allow user to fake identity. The user who posted the timeline must be the same user that is logged in
+    if (!req.user.equals(timeline.user)) {
         res.sendStatus(401);
-    }*/
+        return;
+    }
     timeline.save(function(err, m) {
         if (err) {
             res.status(400).send(err);
@@ -30,7 +32,7 @@ exports.getTimeline = function(req, res) {
     // Use the Timeline model to find a specific timeline
     Timeline.findById(req.params.timeline_id, function(err, timeline) {
         if (err) {
-            res.status(400).send(err)
+            res.status(400).send(err);
             return;
         };
 
@@ -58,13 +60,17 @@ exports.putTimeline = function(req, res) {
 };
 // Create endpoint /api/timelines/:timeline_id for DELETE
 exports.deleteTimeline = function(req, res) {
-    // Use the Beer model to find a specific beer and remove it
-    Timeline.findById(req.params.timeline_id, function(err, m) {
+    // Find timeline and remove it
+    Timeline.findById(req.params.timeline_id, function(err, timeline) {
         if (err) {
             res.status(400).send(err);
             return;
         }
-        m.remove();
+        if (!req.user.equals(timeline.user)) {
+            res.sendStatus(401);
+            return;
+        }
+        timeline.remove();
         res.sendStatus(200);
     });
 };
