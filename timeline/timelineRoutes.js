@@ -22,5 +22,8 @@ function timelineRoutes(passport) {
         .put(timelineController.putTimeline)
         .delete(timelineController.deleteTimeline);
 
+    router.route('/:timeline_id/privacy')
+        .post(timelineController.changePrivacy);
+
     return router;
 }
