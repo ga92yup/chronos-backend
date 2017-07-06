@@ -23,7 +23,7 @@ function timelineRoutes(passport) {
         .delete(timelineController.deleteTimeline);
 
     router.route('/:timeline_id/privacy')
-        .post(timelineController.changePrivacy);
+        .put(timelineController.changePrivacy);
 
     return router;
 }
