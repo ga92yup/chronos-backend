@@ -17,7 +17,7 @@ exports.postTimeline = function(req, res) {
     });
 };
 
-// Create endpoint /api/timelines for GET
+// Create endpoint /api/timeline for GET
 exports.getTimelines = function(req, res) {
     Timeline.find(function(err, timelines) {
         if (err) {
@@ -27,7 +27,7 @@ exports.getTimelines = function(req, res) {
         res.json(timelines);
     });
 };
-// Create endpoint /api/timelines/:timeline_id for GET
+// Create endpoint /api/timeline/:timeline_id for GET
 exports.getTimeline = function(req, res) {
     // Use the Timeline model to find a specific timeline
     Timeline.findById(req.params.timeline_id, function(err, timeline) {
@@ -39,7 +39,7 @@ exports.getTimeline = function(req, res) {
         res.json(timeline);
     });
 };
-// Create endpoint /api/timelines/:timeline_id for PUT
+// Create endpoint /api/timeline/:timeline_id for PUT
 exports.putTimeline = function(req, res) {
     // Use the Timeline model to find a specific timeline and update it
     Timeline.findByIdAndUpdate(
@@ -51,14 +51,18 @@ exports.putTimeline = function(req, res) {
             //run validations
             runValidators: true
         }, function (err, timeline) {
-        if (err) {
-            res.status(400).send(err);
-            return;
-        }
-        res.json(timeline);
-    });
+            if (!req.user.equals(timeline.user)) {
+                res.sendStatus(401);
+                return;
+            }
+            if (err) {
+                res.status(400).send(err);
+                return;
+            }
+            res.json(timeline);
+        });
 };
-// Create endpoint /api/timelines/:timeline_id for DELETE
+// Create endpoint /api/timeline/:timeline_id for DELETE
 exports.deleteTimeline = function(req, res) {
     // Find timeline and remove it
     Timeline.findById(req.params.timeline_id, function(err, timeline) {
@@ -72,28 +76,5 @@ exports.deleteTimeline = function(req, res) {
         }
         timeline.remove();
         res.sendStatus(200);
-    });
-};
-
-// Create endpoint /api/timelines/:timeline_id/privacy for PUT
-exports.changePrivacy = function(req, res) {
-    Timeline.findByIdAndUpdate(req.params.timeline_id, function(err, timeline) {
-        if (err) {
-            res.status(400).send(err);
-            return;
-        }
-        if (!req.user.equals(timeline.user)) {
-            res.sendStatus(401);
-            return;
-        }
-        var newPrivacySetting = req.body;
-        timeline.privacySetting = newPrivacySetting;
-        timeline.save(function(err, timeline) {
-            if (err) {
-                res.status(400).send(err);
-                return;
-            }
-            res.status(201).json(timeline);
-        });
     });
 };
