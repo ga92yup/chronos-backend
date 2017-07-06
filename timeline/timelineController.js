@@ -74,3 +74,26 @@ exports.deleteTimeline = function(req, res) {
         res.sendStatus(200);
     });
 };
+
+// Create endpoint /api/timelines/:timeline_id/privacy for PUT
+exports.changePrivacy = function(req, res) {
+    Timeline.findByIdAndUpdate(req.params.timeline_id, function(err, timeline) {
+        if (err) {
+            res.status(400).send(err);
+            return;
+        }
+        if (!req.user.equals(timeline.user)) {
+            res.sendStatus(401);
+            return;
+        }
+        var newPrivacySetting = req.body;
+        timeline.privacySetting = newPrivacySetting;
+        timeline.save(function(err, timeline) {
+            if (err) {
+                res.status(400).send(err);
+                return;
+            }
+            res.status(201).json(timeline);
+        });
+    });
+};
