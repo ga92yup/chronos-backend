@@ -6,6 +6,10 @@ var timelineSchema   = new mongoose.Schema({
     id: Number,
     name: String,
     description: String,
+    privacySetting: {
+        type: Boolean,
+        default: true
+    },
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
