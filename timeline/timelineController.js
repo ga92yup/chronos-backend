@@ -56,6 +56,16 @@ exports.getTimelines = function(req, res) {
             res.json(timelines);
         });
     }
+    else if (req.params.queryType === "public") {
+        Timeline.find({"privacySetting": "true"}, function (err, timelines) {
+            if (err) {
+                res.status(400).send(err);
+                return;
+            };
+            res.json(timelines);
+        });
+    }
+
 /*
     Timeline.find(function(err, timelines) {
         if (err) {
