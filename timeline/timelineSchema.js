@@ -8,7 +8,7 @@ var timelineSchema   = new mongoose.Schema({
     description: String,
     privacySetting: {
         type: Boolean,
-        default: true
+        default: true //true = private
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -23,7 +23,8 @@ var timelineSchema   = new mongoose.Schema({
                 end: Date
             }
         ]
-    }
+    },
+    views : Number
 });
 
 var Timeline = mongoose.model('Timeline', timelineSchema);

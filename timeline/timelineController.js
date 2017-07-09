@@ -47,6 +47,7 @@ exports.getTimelines = function(req, res) {
     console.log("request");
     console.log(req.params);
 
+    //select all timelines by specified user
     if (req.params.queryType === "user") {
         Timeline.find({ "user" : ObjectId(req.params.queryContent)}, function(err, timelines) {
             if (err) {
@@ -56,8 +57,9 @@ exports.getTimelines = function(req, res) {
             res.json(timelines);
         });
     }
+    //only select timelines that are not private
     else if (req.params.queryType === "public") {
-        Timeline.find({"privacySetting": "true"}, function (err, timelines) {
+        Timeline.find({"privacySetting": "false"}, function (err, timelines) {
             if (err) {
                 res.status(400).send(err);
                 return;
@@ -65,25 +67,18 @@ exports.getTimelines = function(req, res) {
             res.json(timelines);
         });
     }
-
-/*
-    Timeline.find(function(err, timelines) {
-        if (err) {
-            res.status(400).send(err);
-            return;
-        }
-        res.json(timelines);
-    });
-    */
 };
 // Create endpoint /api/timeline/:timeline_id for GET
 exports.getTimeline = function(req, res) {
     // Use the Timeline model to find a specific timeline
-    Timeline.findById(req.params.timeline_id, function(err, timeline) {
+    // Increase view counter on every get request
+    Timeline.findById(req.params.timeline_id, { $inc: { views : 1 }}, function(err, timeline) {
         if (err) {
             res.status(400).send(err);
             return;
-        };
+        }
+
+        console.log("views: " + timeline.views);
 
         res.json(timeline);
     });
