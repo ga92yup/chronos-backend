@@ -1,5 +1,19 @@
-// importing Timeline model
+/** The timeline controller receives the http requests and executes database requests.
+ *
+ * "req" is an object containing information about the HTTP request that raised the event.
+ * In response to "req", you use "res" to send back the desired HTTP response.
+ *
+ * Status Codes:
+ *
+ * 200: OK
+ * 201: Created
+ *
+ * 400: Bad Request
+ * 401: Unauthorized
+ * 404: Not found
+ */
 var Timeline = require('./timelineSchema');
+var ObjectId = require('mongodb').ObjectID;
 
 exports.postTimeline = function(req, res) {
     var timeline = new Timeline(req.body);
@@ -17,24 +31,54 @@ exports.postTimeline = function(req, res) {
     });
 };
 
-// Create endpoint /api/timeline for GET
+/**
+ * This function looks for timelines that match the query.
+ *
+ * queryType can either be "user" or "public"
+ * queryContent will be "_id" for a user query or every public timeline.
+ * We might add a filter for public timelines later that specificies which timelines to search for.
+ * (e.g. "historic", "universe")
+ *
+ * @param req
+ * @param res
+ */
 exports.getTimelines = function(req, res) {
-    Timeline.find(function(err, timelines) {
-        if (err) {
-            res.status(400).send(err);
-            return;
-        }
-        res.json(timelines);
-    });
+
+    console.log("request");
+    console.log(req.params);
+
+    //select all timelines by specified user
+    if (req.params.queryType === "user") {
+        Timeline.find({ "user" : ObjectId(req.params.queryContent)}, function(err, timelines) {
+            if (err) {
+                res.status(400).send(err);
+                return;
+            };
+            res.json(timelines);
+        });
+    }
+    //only select timelines that are not private
+    else if (req.params.queryType === "public") {
+        Timeline.find({"privacySetting": "false"}, function (err, timelines) {
+            if (err) {
+                res.status(400).send(err);
+                return;
+            };
+            res.json(timelines);
+        });
+    }
 };
 // Create endpoint /api/timeline/:timeline_id for GET
 exports.getTimeline = function(req, res) {
     // Use the Timeline model to find a specific timeline
-    Timeline.findById(req.params.timeline_id, function(err, timeline) {
+    // Increase view counter on every get request
+    Timeline.findById(req.params.timeline_id, { $inc: { views : 1 }}, function(err, timeline) {
         if (err) {
             res.status(400).send(err);
             return;
-        };
+        }
+
+        console.log("views: " + timeline.views);
 
         res.json(timeline);
     });

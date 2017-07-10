@@ -13,9 +13,11 @@ function timelineRoutes(passport) {
     //middleware
     router.use(mw.unless({method: ['GET', 'OPTIONS']}));
 
-    router.route('/')
-        .post(timelineController.postTimeline)
+    router.route('/:queryType/:queryContent')
         .get(timelineController.getTimelines);
+
+    router.route('/')
+        .post(timelineController.postTimeline);
 
     router.route('/:timeline_id')
         .get(timelineController.getTimeline)
