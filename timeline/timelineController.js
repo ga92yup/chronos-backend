@@ -59,7 +59,7 @@ exports.getTimelines = function(req, res) {
     }
     //only select timelines that are not private
     else if (req.params.queryType === "public") {
-        Timeline.find({"privacySetting": "false"}, function (err, timelines) {
+        Timeline.find({"privacySetting": "true"}, function (err, timelines) {
             if (err) {
                 res.status(400).send(err);
                 return;
