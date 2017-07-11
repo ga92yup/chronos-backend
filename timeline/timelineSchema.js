@@ -8,7 +8,7 @@ var timelineSchema   = new mongoose.Schema({
     description: String,
     privacySetting: {
         type: Boolean,
-        default: true //true = private
+        default: false //false = private
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
