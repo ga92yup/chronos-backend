@@ -6,6 +6,11 @@ var timelineSchema   = new mongoose.Schema({
     id: Number,
     name: String,
     description: String,
+    created_at: {
+        type: Date,
+        required: true,
+        default: Date.now()
+    },
     privacySetting: {
         type: Boolean,
         default: false //false = private
