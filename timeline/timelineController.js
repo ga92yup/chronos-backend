@@ -70,17 +70,25 @@ exports.getTimelines = function (req, res) {
 };
 // Create endpoint /api/timeline/:timeline_id for GET
 exports.getTimeline = function (req, res) {
+    // console.log("requesting user: ");
+    // console.log(req.query.user);
+
     // Use the Timeline model to find a specific timeline
     // Increase view counter on every get request. We use this to determine the most popular timelines.
-    // TODO: Increase view counter on legal requests, only. (Currently, it will return 401 if
-    // private TL is requested but still increase view counter.)
+    // TODO: Increase view counter on legal requests, only. (Currently, it will return 401 if private TL is requested but still increase view counter.)
     Timeline.findOneAndUpdate({"_id": ObjectId(req.params.timeline_id)}, {$inc: {views: 1}}, function (err, timeline) {
-        console.log(timeline);
+        // console.log("found timeline: ");
+        // console.log(timeline);
         if (err) {
             res.status(400).send(err);
             return;
         }
-        console.log("views: " + timeline.views);
+
+        if (req.query.user != timeline.user && timeline.privacySetting === false) {
+            console.log("unauthorized access: return 401");
+            res.sendStatus(401);
+            return;
+        }
         res.json(timeline);
     });
 };
