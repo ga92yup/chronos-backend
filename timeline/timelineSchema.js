@@ -24,7 +24,10 @@ var timelineSchema   = new mongoose.Schema({
             }
         ]
     },
-    views : Number
+    views : {
+        type: Number,
+        default: 1
+    }
 });
 
 var Timeline = mongoose.model('Timeline', timelineSchema);
