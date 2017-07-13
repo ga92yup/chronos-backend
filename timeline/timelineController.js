@@ -15,14 +15,14 @@
 var Timeline = require('./timelineSchema');
 var ObjectId = require('mongodb').ObjectID;
 
-exports.postTimeline = function(req, res) {
+exports.postTimeline = function (req, res) {
     var timeline = new Timeline(req.body);
     //do not allow user to fake identity. The user who posted the timeline must be the same user that is logged in
     if (!req.user.equals(timeline.user)) {
         res.sendStatus(401);
         return;
     }
-    timeline.save(function(err, m) {
+    timeline.save(function (err, m) {
         if (err) {
             res.status(400).send(err);
             return;
@@ -42,18 +42,18 @@ exports.postTimeline = function(req, res) {
  * @param req
  * @param res
  */
-exports.getTimelines = function(req, res) {
+exports.getTimelines = function (req, res) {
 
     console.log("request");
     console.log(req.params);
 
     //select all timelines by specified user
     if (req.params.queryType === "user") {
-        Timeline.find({ "user" : ObjectId(req.params.queryContent)}, function(err, timelines) {
+        Timeline.find({"user": ObjectId(req.params.queryContent)}, function (err, timelines) {
             if (err) {
                 res.status(400).send(err);
                 return;
-            };
+            }
             res.json(timelines);
         });
     }
@@ -63,53 +63,51 @@ exports.getTimelines = function(req, res) {
             if (err) {
                 res.status(400).send(err);
                 return;
-            };
+            }
             res.json(timelines);
         });
     }
 };
 // Create endpoint /api/timeline/:timeline_id for GET
-exports.getTimeline = function(req, res) {
+exports.getTimeline = function (req, res) {
     // Use the Timeline model to find a specific timeline
-    // Increase view counter on every get request
-    Timeline.findById(req.params.timeline_id, { $inc: { views : 1 }}, function(err, timeline) {
+    // Increase view counter on every get request. We use this to determine the most popular timelines.
+    // TODO: Increase view counter on legal requests, only. (Currently, it will return 401 if
+    // private TL is requested but still increase view counter.)
+    Timeline.findOneAndUpdate({"_id": ObjectId(req.params.timeline_id)}, {$inc: {views: 1}}, function (err, timeline) {
+        console.log(timeline);
         if (err) {
             res.status(400).send(err);
             return;
         }
-
         console.log("views: " + timeline.views);
-
         res.json(timeline);
     });
 };
 // Create endpoint /api/timeline/:timeline_id for PUT
-exports.putTimeline = function(req, res) {
+exports.putTimeline = function (req, res) {
     // Use the Timeline model to find a specific timeline and update it
-    Timeline.findByIdAndUpdate(
-        req.params.timeline_id,
-        req.body,
-        {
-            //pass the new object to cb function
-            new: true,
-            //run validations
-            runValidators: true
-        }, function (err, timeline) {
-            if (!req.user.equals(timeline.user)) {
-                res.sendStatus(401);
-                return;
-            }
-            if (err) {
-                res.status(400).send(err);
-                return;
-            }
-            res.json(timeline);
-        });
+    Timeline.findByIdAndUpdate(req.params.timeline_id, req.body, {
+        //pass the new object to cb function
+        new: true,
+        //run validations
+        runValidators: true
+    }, function (err, timeline) {
+        if (err) {
+            res.status(400).send(err);
+            return;
+        }
+        if (!req.user.equals(timeline.user)) {
+            res.sendStatus(401);
+            return;
+        }
+        res.json(timeline);
+    });
 };
 // Create endpoint /api/timeline/:timeline_id for DELETE
-exports.deleteTimeline = function(req, res) {
+exports.deleteTimeline = function (req, res) {
     // Find timeline and remove it
-    Timeline.findById(req.params.timeline_id, function(err, timeline) {
+    Timeline.findById(req.params.timeline_id, function (err, timeline) {
         if (err) {
             res.status(400).send(err);
             return;
