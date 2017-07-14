@@ -3,16 +3,32 @@ var Config = require('./config/config.js');
  * db connect
  */
 var mongoose = require('mongoose');
-mongoose.connect([Config.db.host, '/', Config.db.name].join(''), function(db, err) {
-        if (!err) {
-            console.log('Connected to MongoDB');
-        }
-    },
-    {
-        //eventually it's a good idea to make this secure
-        user: Config.db.user,
-        pass: Config.db.pass
+mongoose.connect([Config.db.host, '/', Config.db.name].join(''));
+
+// CONNECTION EVENTS
+// When successfully connected
+mongoose.connection.on('error',function (err) {
+    console.log('Mongoose default connection error: ' + err);
+});
+
+// If the connection throws an error
+mongoose.connection.on('connected', function () {
+    console.log('Mongoose default connection open to ' + [Config.db.host, '/', Config.db.name].join(''));
+});
+
+// When the connection is disconnected
+mongoose.connection.on('disconnected', function () {
+    console.log('Mongoose default connection disconnected');
+});
+
+// If the Node process ends, close the Mongoose connection
+process.on('SIGINT', function() {
+    mongoose.connection.close(function () {
+        console.log('Mongoose default connection disconnected through app termination');
+        process.exit(0);
     });
+});
+
 /**
  * create application
  */
