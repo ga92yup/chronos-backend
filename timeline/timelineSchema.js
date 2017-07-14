@@ -8,8 +8,7 @@ var timelineSchema   = new mongoose.Schema({
     description: String,
     created_at: {
         type: Date,
-        required: true,
-        default: Date.now()
+        required: true
     },
     privacySetting: {
         type: Boolean,
@@ -19,6 +18,9 @@ var timelineSchema   = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+
+    uname: String,
+
     content: {
         eventItem: [
             {
