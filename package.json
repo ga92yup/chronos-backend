@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/sebischair/sebamaster-movie-backend"
+    "url": "https://github.com/ga92yup/chronos-backend"
   },
   "keywords": [
     "chronos-backend",
@@ -18,9 +18,9 @@
   "author": "team39",
   "license": "ISC",
   "bugs": {
-    "url": "https://bitbucket.org/sebischair/sebamaster-movie-backend"
+    "url": "https://github.com/ga92yup/chronos-backend/issues"
   },
-  "homepage": "https://bitbucket.org/sebischair/sebamaster-movie-backend#readme",
+  "homepage": "https://github.com/ga92yup/chronos-backend#readme",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.0",
